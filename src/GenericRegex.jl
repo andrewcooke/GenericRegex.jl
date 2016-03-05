@@ -1,5 +1,9 @@
+
 module GenericRegex
 
-# package code goes here
+module Parse
+include("parse/unicode.jl")
+end
 
-end # module
+end
+
