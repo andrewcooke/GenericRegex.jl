@@ -37,6 +37,7 @@ function make_pattern()
             G.Group{Char}(group_popped[i], p)
         end
         
+        # need to specify {Char} here as handlign Any[] from parser
         make_sequence(p) = length(p) == 1 ? p[1] : G.Sequence{Char}(p)
         make_choice(p) = length(p) == 1 ? p[1] : G.Choice{Char}(p)
         
