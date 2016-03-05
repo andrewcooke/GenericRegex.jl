@@ -5,12 +5,11 @@ using ParserCombinator
 using GenericRegex
 using GenericRegex.IR.Graph; G = GenericRegex.IR.Graph
 
-#Literal(s::AbstractString) = (@assert length(s) == 1; Range(s[1], s[1]))
 
 make_rpt(lo) = p -> G.Repeat(p, lo, typemax(Int))
 make_rpt(lo, hi) = p -> G.Repeat(p, lo, hi)
 
-make_char(s) = (@assert length(s) == 1; G.Literal(s[1]))
+Literal(s::AbstractString) = (@assert length(s) == 1; G.Range(s[1], s[1]))
 
 
 function make_pattern()
@@ -37,12 +36,12 @@ function make_pattern()
             G.Group{Char}(group_popped[i], p)
         end
         
-        # need to specify {Char} here as handlign Any[] from parser
+        # need to specify {Char} here as handling Any[] from parser
         make_sequence(p) = length(p) == 1 ? p[1] : G.Sequence{Char}(p)
         make_choice(p) = length(p) == 1 ? p[1] : G.Choice{Char}(p)
         
         
-        literal = p"[^[\].*+\\|(){}?]"                       > make_char
+        literal = p"[^[\].*+\\|(){}?]"                       > Literal
         escaped = ~Equal("\\") + Dot()                       > G.Literal
         wild = E"."                                          > ()->G.Wild(Char)
         outseq = Delayed()
