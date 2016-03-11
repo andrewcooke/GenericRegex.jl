@@ -41,28 +41,30 @@ function make_pattern()
         make_choice(p) = length(p) == 1 ? p[1] : G.Choice{Char}(p)
         
         
-        literal = p"[^[\].*+\\|(){}?]"                       > Literal
-        escaped = ~Equal("\\") + Dot()                       > G.Literal
-        wild = E"."                                          > ()->G.Wild(Char)
+        literal = p"[^[\].*+\\|(){}?]"                     > Literal
+        escaped = ~Equal("\\") + Dot()                     > G.Literal
+        wild = E"."                                        > () -> G.Wild(Char)
         outseq = Delayed()
         
         atom = literal | escaped | wild | outseq
-        plus = atom + E"+"                                   > make_rpt(1)
-        star = atom + E"*"                                   > make_rpt(0)
-        opt = atom + E"?"                                    > make_rpt(0, 1)
+        plus = atom + E"+"                                 > make_rpt(1)
+        star = atom + E"*"                                 > make_rpt(0)
+        opt = atom + E"?"                                  > make_rpt(0, 1)
         once = atom + !(E"*"|E"+"|E"?")
         
-        inseq = Plus(plus | star | opt | once)              |> make_sequence
-        choice = PlusList(inseq, E"|")                      |> make_choice
+        inseq = Plus(plus | star | opt | once)            |> make_sequence
+        choice = PlusList(inseq, E"|")                    |> make_choice
         
-        open = ITransform(E"("+ !(e"?") ,                      pre_group)
-        gchoice = IApp(open + choice + E")",                   post_group)
+        open = ITransform(E"("+ !(e"?") ,                    pre_group)
+        gchoice = IApp(open + choice + E")",                 post_group)
         nchoice = E"(?:" + choice + E")"
         
-        outseq.matcher = Plus(gchoice | nchoice)            |> make_sequence
+        outseq.matcher = Plus(gchoice | nchoice)          |> make_sequence
         
         return choice + Eos()
+
     end
+
 end
 
 end
